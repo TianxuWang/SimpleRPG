@@ -1,10 +1,7 @@
 package basic 
 {
 	import org.flixel.FlxSprite;
-	/**
-	 * ...
-	 * @author Tianxu Wang
-	 */
+
 	public class Item extends FlxSprite
 	{
 		public var name:String;
