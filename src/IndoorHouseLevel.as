@@ -1,5 +1,6 @@
 package  
 {
+	import Enemy.Goblin;
 	import org.flixel.*;
 	import basic.*;
 	import org.flixel.plugin.photonstorm.*;
@@ -164,13 +165,13 @@ package
 		
 		override protected function createPlayer():void 
 		{
-			player = new Player(playerStart.x, playerStart.y, Assets.WARRIOR_SPRITE, FlxObject.DOWN);
+			player = new Player(playerStart.x, playerStart.y, Assets.NINJA_SRPITE, FlxObject.RIGHT);
 			Registry.player = player as Player;
 		}
 		
 		override protected function createWeapon():void 
 		{
-			weapon = WeaponFactory.createSword1();
+			weapon = WeaponFactory.createKatana(100, 100, Registry.player);
 			player.weapon = weapon;
 			Registry.weapon = player.weapon;
 		}
@@ -182,10 +183,10 @@ package
 		
 		override protected function createEnemy():void 
 		{
-			enemyGroup.add(EnemyFactory.createGoblin(240, 120, FlxObject.RIGHT));
-			enemyGroup.add(EnemyFactory.createGoblin(256, 102, FlxObject.DOWN));
-			enemyGroup.add(EnemyFactory.createGoblin(272, 120, FlxObject.LEFT));
-			enemyGroup.add(EnemyFactory.createGoblin(256, 138, FlxObject.UP));
+			enemyGroup.add(new Goblin(240, 120, FlxObject.RIGHT));
+			enemyGroup.add(new Goblin(256, 102, FlxObject.DOWN));
+			enemyGroup.add(new Goblin(272, 120, FlxObject.LEFT));
+			enemyGroup.add(new Goblin(256, 138, FlxObject.UP));
 			Registry.enemyGroup = enemyGroup;
 		}
 		
@@ -278,7 +279,7 @@ package
 		
 		public function onCollideWeaponEnemy(_object:FlxSprite, _enemy:Enemy):void
 		{
-			if (!_enemy.isBeingHit)
+			if (_enemy.status != Entity.HURTING)
 				_enemy.hitByWeapon(player);		
 		}
 	}

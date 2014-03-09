@@ -14,7 +14,7 @@ package
 		override public function create():void
 		{
 			FlxG.debug = true;
-			//FlxG.visualDebug = true;
+			FlxG.visualDebug = true;
 			FlxG.mouse.show();
 			
 			// load level

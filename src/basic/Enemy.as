@@ -9,14 +9,12 @@ package basic
 	 */
 	public class Enemy extends Entity
 	{
-		public static const IDLE:int = 0
-		public static const ALERT:int = 1;
-		public static const SEARCH:int = 2
-		public static const CHASE:int = 3;
 		public static const RESET:int = -1;
-		public static const PREPARED:int = 4;
+		public static const ALERT:int = -2;
+		public static const SEARCH:int = -3;
+		public static const CHASE:int = -4;
+		public static const PREPARED:int = -5;
 		
-		public var status:int;
 		public var _exp:int;
 		
 		private var _origin:FlxPoint;
@@ -29,7 +27,6 @@ package basic
 			super(X, Y);			
 			health = 100;
 			immovable = false;
-			status = IDLE;
 			_origin = new FlxPoint(_center.x, _center.y);
 			_faceToPlayer = 0;
 		}
@@ -37,6 +34,8 @@ package basic
 		override protected function updateControls():void 
 		{
 			super.updateControls();
+			
+			// AI
 			var rand:int;
 			var player:Player = Registry.player;
 			var distanceToPlayer:Number = Helper.getDistance(player._center, _center);
@@ -44,7 +43,7 @@ package basic
 	
 			switch (alive) 
 			{
-				case status == RESET && distanceToOrigin > 10:
+				case status == RESET && distanceToOrigin > 10:	// has chased so far, need go back to origin
 					if (_origin.y < this.y)
 						moveUp();
 					else 
@@ -56,7 +55,6 @@ package basic
 						moveRight();
 					break;
 				case distanceToOrigin > 150: 	
-					// has chased so far, need go back to origin
 					status = RESET;
 					break;
 				case distanceToPlayer >= 150: 	

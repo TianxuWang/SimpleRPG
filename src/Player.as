@@ -11,6 +11,10 @@ package
 	 */
 	public class Player extends Entity
 	{
+		public static const SIZE:FlxPoint = new FlxPoint(24, 23);
+		public static const WALKING:int = 3;
+		public static const RUNNING:int = 4;
+		
 		public var manaBar:FlxBar;
 		public var staminaBar:FlxBar;
 		public var rageBar:FlxBar;
@@ -46,7 +50,8 @@ package
 		{
             super(X, Y);
 			// basic
-			loadGraphic(ImgPlayer, true, false, Entity.SIZE.x, Entity.SIZE.y);
+			_size = SIZE;
+			loadGraphic(ImgPlayer, true, false, Player.SIZE.x, Player.SIZE.y);
 			_walkSpeed = 40;
 			_runSpeed = 80;
 			maxVelocity = new FlxPoint(_walkSpeed, _walkSpeed);
@@ -86,7 +91,8 @@ package
 			if (FlxG.keys.justPressed("C")) 
 			{
 				if (_curStamina >= 20) {
-					isAttacking = true;
+					status = ATTACKING;
+					//isAttacking = true;
 					_curStamina -= 20;
 					attack();
 				}
@@ -94,12 +100,13 @@ package
 			else if (FlxG.keys.justPressed("A"))
 			{
 				if (_curRage >= _swordWave.cost) {
-					isAttacking = true;
+					//isAttacking = true;
+					status = ATTACKING;
 					_curRage -= _swordWave.cost;
 					swordWave();
 				}
 			}
-			else if (!isAttacking) 
+			else if (status != ATTACKING) 
 			{
 				if (FlxG.keys.pressed("X") && stamina > 0) {
 					isRunning = true;
@@ -134,6 +141,15 @@ package
 		override protected function updateAnimations():void 
 		{
 			super.updateAnimations();
+			
+			switch (_curAnim.name) 
+			{
+				case "idle_left":
+					weapon.play("idle_left");
+					break;
+				default:
+					break;
+			}
 			
 			if (timer_swordWave.hasExpired && swordWaveFiredNum > 0)
 			{
@@ -227,7 +243,7 @@ package
 		
 		private function onCollideSwordWaveEnemy(_bullet:Bullet, _enemy:Enemy):void 
 		{
-			if (!_enemy.isBeingHit) {
+			if (_enemy.status != HURTING) {
 				_enemy.hitBySpell(_swordWave);	
 			}
 		}

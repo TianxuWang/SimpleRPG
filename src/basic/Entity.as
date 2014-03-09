@@ -8,9 +8,12 @@ package basic
 	 * @author Tianxu Wang
 	 */
 	public class Entity extends FlxSprite
-	{
-		public static const SIZE:FlxPoint = new FlxPoint(16, 18);
+	{	
+		public static const IDLE:int = 0
+		public static const ATTACKING:int = 1;
+		public static const HURTING:int = 2;
 		
+		public var status:int;
 		public var weapon:Weapon;
 		public var healthBar:FlxBar;
 		public var battleMsg:FlxText;
@@ -18,8 +21,9 @@ package basic
 		public var isAttacking:Boolean;
 		public var isBeingHit:Boolean;
 		
-		protected var flashTimer:FlxDelay;
+		protected var timer_flash:FlxDelay;
 		
+		public var _size:FlxPoint;
 		public var _center:FlxPoint;
 		public var _walkSpeed:int;
 		public var _runSpeed:int;
@@ -41,14 +45,16 @@ package basic
         public function Entity(X:Number = 100, Y:Number = 100):void {
             super(X, Y);
 			
-			_center = new FlxPoint(X + SIZE.x / 2, Y + SIZE.y / 2);
+			_size = new FlxPoint(16, 18);
+			_center = new FlxPoint(X + _size.x / 2, Y + _size.y / 2);
 			
+			status = IDLE;
 			weapon = null;
 			healthBar = null;
-			isAttacking = false;
-			isBeingHit = false;
+			//isAttacking = false;
+			//isBeingHit = false;
 			
-			flashTimer = new FlxDelay(200);
+			timer_flash = new FlxDelay(200);
 			// animations
 			createAnimations();
         }
@@ -59,9 +65,9 @@ package basic
 		protected function createAnimations():void {
 			// idle
 			addAnimation("idle_up", [1]);
-			addAnimation("idle_right", [5]);
+			addAnimation("idle_right", [15, 16, 17, 16], 6);
 			addAnimation("idle_down", [9]);
-			addAnimation("idle_left", [13]);
+			addAnimation("idle_left", [21, 22, 23, 22], 6);
 			// walk
 			addAnimation("walk_up", [0, 1, 2, 1], 6);
 			addAnimation("walk_right", [4, 5, 6, 5], 6);
@@ -116,8 +122,10 @@ package basic
 				    || _curAnim.name == "attack_right") 
 				&& finished) 
 			{
-				isAttacking = false;
-				Registry.enemyGroup.setAll("isBeingHit", false);
+				status = IDLE;
+				Registry.enemyGroup.setAll("status", IDLE);
+				//isAttacking = false;
+				//Registry.enemyGroup.setAll("isBeingHit", false);
 			}
 			
 			var absX:Number = Math.abs(velocity.x);
@@ -133,7 +141,7 @@ package basic
 				facing = LEFT
 			// up
 			if (facing == UP) {
-				if (isAttacking) {
+				if (status == ATTACKING) {
 					play("attack_up");
 				}
 				else if (velocity.y == -_runSpeed) {
@@ -148,7 +156,7 @@ package basic
 			}
 			// down
 			else if (facing == DOWN) {
-				if (isAttacking) {
+				if (status == ATTACKING) {
 					play("attack_down");
 				}
 				else if (velocity.y == _runSpeed) {
@@ -163,7 +171,7 @@ package basic
 			}
 			// right
 			else if (facing == RIGHT) {
-				if (isAttacking) {
+				if (status == ATTACKING) {
 					play("attack_right");
 				}
 				else if (velocity.x == _runSpeed) {
@@ -178,7 +186,7 @@ package basic
 			}
 			// left
 			else if (facing == LEFT) {
-				if (isAttacking) {
+				if (status == ATTACKING) {
 					play("attack_left");
 				}
 				else if (velocity.x == -_runSpeed) {
@@ -188,11 +196,12 @@ package basic
 					play("walk_left");
 				}
 				else {
+					status = IDLE;
 					play("idle_left");
 				}
 			}
 			
-			if (flashTimer.hasExpired) {
+			if (timer_flash.hasExpired) {
 				_colorTransform = null;
 				calcFrame();
 			}
@@ -200,8 +209,8 @@ package basic
 		
 		protected function updateStatus():void 
 		{
-			_center.x = x + SIZE.x / 2;
-			_center.y = y + SIZE.y / 2;
+			_center.x = x + _size.x / 2;
+			_center.y = y + _size.y / 2;
 		}
 		
 		protected function updateBattleMsg():void 
@@ -209,7 +218,7 @@ package basic
 			battleMsg.x = x;
 			battleMsg.y = y - 14;
 			
-			if (flashTimer.hasExpired) {
+			if (timer_flash.hasExpired) {
 				battleMsg.text = "";
 			}
 		}
@@ -246,6 +255,7 @@ package basic
 		
 		public function attack():void 
 		{
+			status = ATTACKING;
 			stop();
 		}
 		
@@ -275,16 +285,18 @@ package basic
 			//this.flicker(0.25);
 			//x = last.x;
 			//y = last.y;	
+			status = HURTING;
 			_curHealth -= (attacker._attack - _defence);
 			health = _curHealth / _maxHealth * 100;
-			isBeingHit = true;
+			
+			//isBeingHit = true;
 			
 			battleMsg.text = "-" + (attacker._attack - _defence);
 			
 			_colorTransform = new ColorTransform();
 			_colorTransform.color = 0xffffff;
 			calcFrame();
-			flashTimer.start();
+			timer_flash.start();
 			
 			if (health <= 0)
 				kill();
@@ -292,16 +304,18 @@ package basic
 		
 		public function hitBySpell(spell:Spell):void 
 		{
+			status = HURTING;
 			_curHealth -= spell.damage;
 			health = _curHealth / _maxHealth * 100;
-			isBeingHit = true;
+			
+			//isBeingHit = true;
 			
 			battleMsg.text = "-" + spell.damage;
 			
 			_colorTransform = new ColorTransform();
 			_colorTransform.color = 0xffffff;
 			calcFrame();
-			flashTimer.start();
+			timer_flash.start();
 			
 			if (health <= 0)
 				kill();

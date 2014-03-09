@@ -28,12 +28,14 @@ package basic
 		// character
 		[Embed(source = "../assets/sprites/warrior_weapon (opengameart - Antifarea - ccby30).png")] public static var WARRIOR_SPRITE:Class;
 		[Embed(source = "../assets/sprites/warrior_head.png")] public static var WARRIOR_HEAD:Class;
+		[Embed(source = "../assets/sprites/ninja.png")] public static var NINJA_SRPITE:Class;
 		
 		// enemy
 		[Embed(source="../assets/sprites/goblin (opengameart - Redshrike - ccby30).png")] public static var GOBLIN_SPRITE:Class
 		
 		// weapon
 		[Embed(source = "../assets/sprites/sword1.png")] public static var SWORD1_SPRITE:Class;
+		[Embed(source = "../assets/sprites/katana.png")] public static var KATANA_SPRITE:Class;
 		
 		// spell
 		[Embed(source = "../assets/sprites/spell_swordwave.png")] public static var SPELL_SWORDWAVE:Class;
