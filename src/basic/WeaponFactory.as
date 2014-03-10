@@ -17,7 +17,7 @@ package basic
 		public static function createKatana(X:Number = 100, Y:Number = 100, HOLDER:Entity = null):Weapon
 		{
 			var newKatana:Weapon = new Weapon(X, Y);
-			newKatana.loadGraphic(Assets.KATANA_SPRITE, true, false, 24, 23);
+			newKatana.loadGraphic(Assets.KATANA_SPRITE, true, false, Weapon.SIZE.x, Weapon.SIZE.y);
 			newKatana.attack = 5;
 			return newKatana;
 		}

@@ -21,6 +21,8 @@ package basic
 		private var _faceToPlayer:uint;
 		private var _distanceToPlayerX:Number;
 		private var _distanceToPlayerY:Number;
+		private var distanceToPlayer:Number;
+		private var distanceToOrigin:Number;
 		
 		public function Enemy(X:Number, Y:Number):void
 		{
@@ -31,42 +33,46 @@ package basic
 			_faceToPlayer = 0;
 		}
 		
+		override protected function createAnimations():void 
+		{
+			super.createAnimations();
+			
+			// idle
+			addAnimation("idle_up", [1]);
+			addAnimation("idle_right", [5]);
+			addAnimation("idle_down", [9], 4);
+			addAnimation("idle_left", [13], 4);
+		}
+		
 		override protected function updateControls():void 
 		{
 			super.updateControls();
 			
 			// AI
 			var rand:int;
-			var player:Player = Registry.player;
-			var distanceToPlayer:Number = Helper.getDistance(player._center, _center);
-			var distanceToOrigin:Number = Helper.getDistance(_origin, _center);
 	
-			switch (alive) 
+			switch (status) 
 			{
-				case status == RESET && distanceToOrigin > 10:	// has chased so far, need go back to origin
-					if (_origin.y < this.y)
-						moveUp();
-					else 
-						moveDown();
-						
-					if (_origin.x < this.x)
-						moveLeft();
-					else 
-						moveRight();
+				case RESET:
+					if (distanceToOrigin > 10) {// has chased so far, need go back to origin
+						if (_origin.y < this.y)
+							moveUp();
+						else 
+							moveDown();
+							
+						if (_origin.x < this.x)
+							moveLeft();
+						else 
+							moveRight();
+					}
 					break;
-				case distanceToOrigin > 150: 	
-					status = RESET;
-					break;
-				case distanceToPlayer >= 150: 	
-					// idle
-					status = IDLE; 		
+				case IDLE: 	
+					// idle	
 					acceleration.x = acceleration.y = 0;
 					healthBar.alpha = 0;
 					break;
-				case distanceToPlayer >= 100: 	
+				case ALERT:
 					// just changing facing
-					status = ALERT;
-				
 					acceleration.x = acceleration.y = 0;
 					healthBar.alpha = 1;
 					rand = FlxMath.rand(0, 200);
@@ -88,9 +94,8 @@ package basic
 							break;
 					}
 					break;
-				case distanceToPlayer >= 60:	
+				case SEARCH:
 					// walking around
-					status = SEARCH;
 					healthBar.alpha = 1;
 					
 					rand = FlxMath.rand(0, 200);
@@ -115,21 +120,20 @@ package basic
 							break;
 					}
 					break;
-				case distanceToPlayer >= 22: 	
+				case CHASE:
 					// moving towards to player
-					status = CHASE;
 					healthBar.alpha = 1;
-					if (player.y < this.y)
+					if (Registry.player.y < this.y)
 						moveUp();
 					else 
 						moveDown();
 						
-					if (player.x < this.x)
+					if (Registry.player.x < this.x)
 						moveLeft();
 					else 
 						moveRight();
 					break;
-				case distanceToPlayer > 0: 		
+				case PREPARED:
 					//keep facing player, prepare to attack
 					acceleration.x = acceleration.y = 0;
 					healthBar.alpha = 1;
@@ -155,6 +159,9 @@ package basic
 		{
 			super.updateStatus();
 			
+			distanceToPlayer = Helper.getDistance(Registry.player._center, _center);
+			distanceToOrigin = Helper.getDistance(_origin, _center);
+			
 			_distanceToPlayerX = Math.abs(_center.x - Registry.player._center.x);
 			_distanceToPlayerY = Math.abs(_center.y - Registry.player._center.y);
 			
@@ -166,6 +173,25 @@ package basic
 				_faceToPlayer = UP;
 			else if (Registry.player.y > y && _distanceToPlayerY > _distanceToPlayerX)
 				_faceToPlayer = DOWN;
+				
+			if (distanceToOrigin >= 150) {
+				status = RESET;
+			}
+			else if (distanceToPlayer >= 150) {
+				status = IDLE;
+			}
+			else if (distanceToPlayer >= 100) {
+				status = ALERT;
+			}
+			else if (distanceToPlayer >= 60) {
+				status = SEARCH;
+			}
+			else if (distanceToPlayer >= 22) {
+				status = CHASE;
+			}
+			else {
+				status = PREPARED;
+			}
 		}
 		
 		override public function hitByWeapon(attacker:Entity):void 

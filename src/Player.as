@@ -14,6 +14,7 @@ package
 		public static const SIZE:FlxPoint = new FlxPoint(24, 23);
 		public static const WALKING:int = 3;
 		public static const RUNNING:int = 4;
+		public static const CASTING:int = 5;
 		
 		public var manaBar:FlxBar;
 		public var staminaBar:FlxBar;
@@ -81,6 +82,27 @@ package
 			_swordWave = new Spell("Sword Wave", this, 0, 20, _attack * 2);
         }
 		
+		override protected function createAnimations():void 
+		{
+			super.createAnimations();
+			// walk in Entity
+			// idle
+			addAnimation("idle_up", [12, 13, 14, 13], 4);
+			addAnimation("idle_right", [15, 16, 17, 16], 4);
+			addAnimation("idle_down", [18, 19, 20, 19], 4);
+			addAnimation("idle_left", [21, 22, 23, 22], 4);
+			// run
+			addAnimation("run_up", [32, 33, 34, 33], 8);
+			addAnimation("run_right", [36, 37, 38, 37], 8);
+			addAnimation("run_down", [40, 41, 42, 41], 8);
+			addAnimation("run_left", [44, 45, 46, 45], 8);
+			// attack
+			addAnimation("attack_up", [16, 17, 18, 19, 17], 10, false);
+			addAnimation("attack_right", [30, 31, 32, 33, 34, 35], 10, false);
+			addAnimation("attack_down", [24, 25, 26, 27, 25], 10, false);
+			addAnimation("attack_left", [42, 43, 44, 45, 46, 47], 10, false);
+		}
+		
 		/**
 		 * Check for user input to control this character
 		 */
@@ -91,8 +113,6 @@ package
 			if (FlxG.keys.justPressed("C")) 
 			{
 				if (_curStamina >= 20) {
-					status = ATTACKING;
-					//isAttacking = true;
 					_curStamina -= 20;
 					attack();
 				}
@@ -142,10 +162,83 @@ package
 		{
 			super.updateAnimations();
 			
-			switch (_curAnim.name) 
+			switch (facing) 
 			{
-				case "idle_left":
-					weapon.play("idle_left");
+				case UP:
+					switch (status) 
+					{
+						case ATTACKING:
+							play("attack_up");
+							break;
+						case RUNNING:
+							play("run_up");
+							break;
+						case WALKING:
+							play("walk_up");
+							break;
+						case IDLE:
+							play("idle_up");
+							break;
+						default:
+							break;
+					}
+					break;
+				case RIGHT:
+					switch (status) 
+					{
+						case ATTACKING:
+							play("attack_right");
+							break;
+						case RUNNING:
+							play("run_right");
+							break;
+						case WALKING:
+							play("walk_right");
+							break;
+						case IDLE:
+							play("idle_right");
+							break;
+						default:
+							break;
+					}
+					break;
+				case DOWN:
+					switch (status) 
+					{
+						case ATTACKING:
+							play("attack_down");
+							break;
+						case RUNNING:
+							play("run_down");
+							break;
+						case WALKING:
+							play("walk_down");
+							break;
+						case IDLE:
+							play("idle_down");
+							break;
+						default:
+							break;
+					}
+					break;
+				case LEFT:
+					switch (status) 
+					{
+						case ATTACKING:
+							play("attack_left");
+							break;
+						case RUNNING:
+							play("run_left");
+							break;
+						case WALKING:
+							play("walk_left");
+							break;
+						case IDLE:
+							play("idle_left");
+							break;
+						default:
+							break;
+					}
 					break;
 				default:
 					break;
@@ -161,6 +254,16 @@ package
 		override protected function updateStatus():void 
 		{
 			super.updateStatus();
+			
+			if (velocity.x == Math.abs(_runSpeed) || velocity.y == Math.abs(_runSpeed)) {
+				status = RUNNING;
+			}
+			else if (velocity.x != 0 || velocity.y != 0) {
+				status = WALKING;
+			}
+			else if (status != ATTACKING){
+				status = IDLE;
+			}
 			
 			// stamina
 			if (isRunning && (velocity.x != 0 || velocity.y != 0) && stamina > 0)

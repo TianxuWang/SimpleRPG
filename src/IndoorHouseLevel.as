@@ -165,7 +165,7 @@ package
 		
 		override protected function createPlayer():void 
 		{
-			player = new Player(playerStart.x, playerStart.y, Assets.NINJA_SRPITE, FlxObject.RIGHT);
+			player = new Player(playerStart.x, playerStart.y, Assets.NINJA_SRPITE, FlxObject.DOWN);
 			Registry.player = player as Player;
 		}
 		

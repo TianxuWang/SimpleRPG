@@ -62,36 +62,23 @@ package basic
 		/**
 		 * Create the animations for this entity
 		 */
-		protected function createAnimations():void {
-			// idle
-			addAnimation("idle_up", [1]);
-			addAnimation("idle_right", [15, 16, 17, 16], 6);
-			addAnimation("idle_down", [9]);
-			addAnimation("idle_left", [21, 22, 23, 22], 6);
+		protected function createAnimations():void 
+		{	
 			// walk
 			addAnimation("walk_up", [0, 1, 2, 1], 6);
-			addAnimation("walk_right", [4, 5, 6, 5], 6);
-			addAnimation("walk_down", [8, 9, 10, 9], 6);
-			addAnimation("walk_left", [12, 13, 14, 13], 6);
-			// run
-			addAnimation("run_up", [32, 33, 34, 33], 8);
-			addAnimation("run_right", [36, 37, 38, 37], 8);
-			addAnimation("run_down", [40, 41, 42, 41], 8);
-			addAnimation("run_left", [44, 45, 46, 45], 8);
-			// attack
-			addAnimation("attack_up", [16, 17, 18, 19, 17], 12, false);
-			addAnimation("attack_right", [20, 21, 22, 23, 21], 12, false);
-			addAnimation("attack_down", [24, 25, 26, 27, 25], 12, false);
-			addAnimation("attack_left", [28, 29, 30, 31, 29], 12, false);
+			addAnimation("walk_right", [3, 4, 5, 4], 6);
+			addAnimation("walk_down", [6, 7, 8, 7], 6);
+			addAnimation("walk_left", [9, 10, 11, 10], 6);
 		}
 		
 		/**
          * Update each timestep
          */
-        override public function update():void {
-            updateControls();
-			updateAnimations();
+        override public function update():void 
+		{
 			updateStatus();
+            updateControls();
+			updateAnimations();	
 			updateSpells();
 			updateBattleMsg();
             super.update();
@@ -100,7 +87,8 @@ package basic
         /**
          * Check keyboard/mouse controls
          */
-        protected function updateControls():void {
+        protected function updateControls():void 
+		{
 			if (!alive)
 			{
 				stop();
@@ -139,6 +127,7 @@ package basic
 				facing = RIGHT;
 			else if (velocity.x < 0 && absX >= absY)
 				facing = LEFT
+				
 			// up
 			if (facing == UP) {
 				if (status == ATTACKING) {
@@ -196,7 +185,7 @@ package basic
 					play("walk_left");
 				}
 				else {
-					status = IDLE;
+					//status = IDLE;
 					play("idle_left");
 				}
 			}
