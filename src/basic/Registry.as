@@ -16,6 +16,8 @@ package basic
 		
 		public static var enemyGroup:FlxGroup;
 		
+		public static var fxGroup:FlxGroup;
+		
 		public function Registry() 
 		{
 			

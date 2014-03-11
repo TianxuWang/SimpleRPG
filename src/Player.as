@@ -16,30 +16,29 @@ package
 		public static const RUNNING:int = 4;
 		public static const CASTING:int = 5;
 		
+		public var job:String;
 		public var manaBar:FlxBar;
 		public var staminaBar:FlxBar;
 		public var rageBar:FlxBar;
+		public var spell_1:Spell;
+		public var spell_2:Spell;
+		public var spell_3:Spell;
 		
-		private var _selfSpeedFloat:Number;
-		private var timer_swordWave:FlxDelay;
-		private var swordWaveFiredNum:int;
-		
-		private var isRunning:Boolean;
-		private var _maxMana:Number;
-		private var _curMana:Number;
-		private var _maxStamina:Number;
-		private var _curStamina:Number;
-		private var _maxRage:Number
+		protected var isRunning:Boolean;
+		protected var _selfSpeedFloat:Number;
+		protected var _maxMana:Number;
+		protected var _curMana:Number;
+		protected var _maxStamina:Number;
+		protected var _curStamina:Number;
+		protected var _maxRage:Number
 		public var _curRage:Number;
-		public var timer_rage:FlxDelay;
-		
+		public var timer_rage:FlxDelay;	
 		
 		public var mana:Number;
 		public var stamina:Number;
 		public var rage:Number
 		public var _curExp:int;
 		public var _expToNextLevel:int;
-		public var _swordWave:Spell;
 		
 		/**
          * Constructor
@@ -47,12 +46,12 @@ package
          * @param   Y   Y location of the entity
          */
 		
-        public function Player(X:Number, Y:Number, ImgPlayer:Class, FACING:uint):void
+        public function Player(X:Number, Y:Number, FACING:uint):void
 		{
             super(X, Y);
 			// basic
 			_size = SIZE;
-			loadGraphic(ImgPlayer, true, false, Player.SIZE.x, Player.SIZE.y);
+			//loadGraphic(ImgPlayer, true, false, Player.SIZE.x, Player.SIZE.y);
 			_walkSpeed = 40;
 			_runSpeed = 80;
 			maxVelocity = new FlxPoint(_walkSpeed, _walkSpeed);
@@ -76,10 +75,7 @@ package
 			_selfSpeed = _speed = _selfSpeedFloat = 5;
 			timer_rage = new FlxDelay(5000);
 			
-			// spell
-			timer_swordWave = new FlxDelay(250);
-			swordWaveFiredNum = 0;
-			_swordWave = new Spell("Sword Wave", this, 0, 20, _attack * 2);
+			// spells in subclasses
         }
 		
 		override protected function createAnimations():void 
@@ -103,9 +99,13 @@ package
 			addAnimation("attack_left", [42, 43, 44, 45, 46, 47], 10, false);
 		}
 		
-		/**
-		 * Check for user input to control this character
-		 */
+		override public function update():void 
+		{
+			super.update();
+			
+			updateSpells();
+		}
+		
 		override protected function updateControls():void {
 			super.updateControls();
 			acceleration.x = acceleration.y = 0
@@ -119,11 +119,9 @@ package
 			}
 			else if (FlxG.keys.justPressed("A"))
 			{
-				if (_curRage >= _swordWave.cost) {
-					//isAttacking = true;
-					status = ATTACKING;
-					_curRage -= _swordWave.cost;
-					swordWave();
+				if (spell_1 != null && _curRage >= spell_1.cost) {	
+					_curRage -= spell_1.cost;
+					spell1();
 				}
 			}
 			else if (status != ATTACKING) 
@@ -242,13 +240,7 @@ package
 					break;
 				default:
 					break;
-			}
-			
-			if (timer_swordWave.hasExpired && swordWaveFiredNum > 0)
-			{
-				_swordWave.bullets.fire();
-				swordWaveFiredNum --;
-			}
+			}			
 		}
 		
 		override protected function updateStatus():void 
@@ -287,17 +279,12 @@ package
 			{
 				levelUp();
 				_expToNextLevel = _expToNextLevel * 2;
-			}
-			
-			
+			}	
 		}
 		
-		override protected function updateSpells():void 
+		protected function updateSpells():void 
 		{
-			// spell 1
-			_swordWave.damage = _attack * 2;
-			if (_swordWave.bullets.group != null)
-				Helper.checkRealCollide(_swordWave.bullets.group.members, Registry.enemyGroup.members, onCollideSwordWaveEnemy);
+			
 		}
 		
 		public function levelUp():void 
@@ -315,40 +302,14 @@ package
 			_selfSpeed = Math.floor(_selfSpeedFloat);
 		}
 		
-		private function swordWave():void 
+		protected function spell1():void 
 		{
-			swordWaveFiredNum ++;
-			switch (facing) 
-			{
-				case UP:
-					_swordWave.bullets.makeAnimatedBullet(10, Assets.SPELL_SWORDWAVE, 16, 16, [6, 7, 8], 12, true, -1, -18);
-					_swordWave.bullets.setBulletDirection(FlxWeapon.BULLET_UP, 60);
-					break;
-				case RIGHT:
-					_swordWave.bullets.makeAnimatedBullet(10, Assets.SPELL_SWORDWAVE, 16, 16, [3, 4, 5], 12, true, 18, 0);
-					_swordWave.bullets.setBulletDirection(FlxWeapon.BULLET_RIGHT, 60);
-					break;
-				case DOWN:
-					_swordWave.bullets.makeAnimatedBullet(10, Assets.SPELL_SWORDWAVE, 16, 16, [0, 1, 2], 12, true, -1, 18);
-					_swordWave.bullets.setBulletDirection(FlxWeapon.BULLET_DOWN, 60);
-					break;
-				case LEFT:
-					_swordWave.bullets.makeAnimatedBullet(10, Assets.SPELL_SWORDWAVE, 16, 16, [9, 10, 11], 12, true, -18, 0);
-					_swordWave.bullets.setBulletDirection(FlxWeapon.BULLET_LEFT, 60);
-					break;
-				default:
-					break;
-			}
-			_swordWave.bullets.setBulletLifeSpan(800);
-			Helper.updateBullets(_swordWave.bullets);
-			timer_swordWave.start();
+			status = ATTACKING;
 		}
 		
-		private function onCollideSwordWaveEnemy(_bullet:Bullet, _enemy:Enemy):void 
+		protected function onCollideSpell1Enemy(_bullet:Bullet, _enemy:Enemy):void 
 		{
-			if (_enemy.status != HURTING) {
-				_enemy.hitBySpell(_swordWave);	
-			}
+			
 		}
 		
 	}

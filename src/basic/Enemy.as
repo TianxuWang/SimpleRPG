@@ -39,9 +39,9 @@ package basic
 			
 			// idle
 			addAnimation("idle_up", [1]);
-			addAnimation("idle_right", [5]);
-			addAnimation("idle_down", [9], 4);
-			addAnimation("idle_left", [13], 4);
+			addAnimation("idle_right", [4]);
+			addAnimation("idle_down", [7]);
+			addAnimation("idle_left", [10]);
 		}
 		
 		override protected function updateControls():void 

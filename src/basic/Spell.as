@@ -10,19 +10,22 @@ package basic
 		public static const ASSIST:int = 2;
 		
 		public var type:int;
+		public var level:int;
 		public var damage:int;
 		public var cost:int;
 		public var caster:Entity;
 		public var bullets:FlxWeapon;
 		public var name:String;
+		public var cooldown:int;
 		
-		public function Spell(NAME:String, CASTER:Entity, TYPE:int, COST:int = 0, DAMAGE:int = 0) 
+		public function Spell(NAME:String, CASTER:Entity, TYPE:int, COST:int = 0, DAMAGE:int = 0, COOLDOWN:int = 0) 
 		{
 			name = NAME;
 			type = TYPE;
 			caster = CASTER;
 			cost = COST;
 			damage = DAMAGE;
+			cooldown = COOLDOWN;
 		}	
 	}
 

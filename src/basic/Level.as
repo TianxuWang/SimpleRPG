@@ -19,6 +19,7 @@ package basic
         public var wallGroup:FlxGroup; // all the map blocks (with collisions)
         public var guiGroup:FlxGroup; // gui elements	
 		
+		
 		/**
          * Player
          */
@@ -30,6 +31,7 @@ package basic
 		public var enemyGroup:FlxGroup;
 		public var BarGroup:FlxGroup;
 		public var battleMsgGroup:FlxGroup
+		public var fxGroup:FlxGroup;
 		
 		/**
          * Constructor
@@ -53,6 +55,8 @@ package basic
 			this.bulletGroup = new FlxGroup();
 			this.BarGroup = new FlxGroup();
 			this.battleMsgGroup = new FlxGroup();
+			this.fxGroup = new FlxGroup();
+			
             // create the level
             this.create();
         }
@@ -63,6 +67,7 @@ package basic
             createPlayer();
 			createEnemy();
 			createWeapon();
+			createFx();
 			createBullet();
 			createBar();
 			createBattleMsg();
@@ -120,6 +125,11 @@ package basic
 			
 		}
 		
+		protected function createFx():void 
+		{
+			
+		}
+		
 		/**
          * Decide the order of the groups. They are rendered in the order they're added, so last added is always on top.
          */
@@ -130,6 +140,7 @@ package basic
             add(player);
 			add(enemyGroup);
 			add(weapon);
+			add(fxGroup);
 			add(bulletGroup);
 			add(BarGroup);
 			add(battleMsgGroup);

@@ -1,4 +1,4 @@
-package Enemy 
+package enemy 
 {
 	import org.flixel.*;
 	import basic.*;

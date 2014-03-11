@@ -1,9 +1,11 @@
 package  
 {
-	import Enemy.Goblin;
-	import org.flixel.*;
+	import job.*;
+	import enemy.*;	
 	import basic.*;
+	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.BlurFX;
 	
 	public class IndoorHouseLevel extends Level
 	{	
@@ -165,7 +167,7 @@ package
 		
 		override protected function createPlayer():void 
 		{
-			player = new Player(playerStart.x, playerStart.y, Assets.NINJA_SRPITE, FlxObject.DOWN);
+			player = new Ninja(playerStart.x, playerStart.y, FlxObject.DOWN);
 			Registry.player = player as Player;
 		}
 		
@@ -178,7 +180,7 @@ package
 		
 		override protected function createBullet():void 
 		{
-			player._swordWave.bullets = new FlxWeapon("sword_wave", player, "x", "y");
+			//player._swordWave.bullets = new FlxWeapon("sword_wave", player, "x", "y");
 		}
 		
 		override protected function createEnemy():void 
@@ -205,10 +207,10 @@ package
 			BarGroup.add(player.rageBar);
 			BarGroup.add(player.staminaBar);
 			
-			for each(var enemy:Enemy in enemyGroup.members) {
-				enemy.healthBar = new FlxBar(32, 16, FlxBar.FILL_LEFT_TO_RIGHT, 14, 2, enemy, "health");
-				enemy.healthBar.trackParent(1, -4);
-				BarGroup.add(enemy.healthBar);
+			for each(var _enemy:Enemy in enemyGroup.members) {
+				_enemy.healthBar = new FlxBar(32, 16, FlxBar.FILL_LEFT_TO_RIGHT, 14, 2, _enemy, "health");
+				_enemy.healthBar.trackParent(1, -4);
+				BarGroup.add(_enemy.healthBar);
 			}
 		}
 		
@@ -219,12 +221,17 @@ package
 			player.battleMsg.size = 6;
 			battleMsgGroup.add(player.battleMsg);
 			
-			for each(var enemy:Enemy in enemyGroup.members) {
-				enemy.battleMsg = new FlxText(enemy.x, enemy.y - 8, 32);
-				enemy.battleMsg.color = 0xffff0000;
-				enemy.battleMsg.size = 6;
-				battleMsgGroup.add(enemy.battleMsg);
+			for each(var _enemy:Enemy in enemyGroup.members) {
+				_enemy.battleMsg = new FlxText(_enemy.x, _enemy.y - 8, 32);
+				_enemy.battleMsg.color = 0xffff0000;
+				_enemy.battleMsg.size = 6;
+				battleMsgGroup.add(_enemy.battleMsg);
 			}	
+		}
+		
+		override protected function createFx():void 
+		{			
+			Registry.fxGroup = this.fxGroup;
 		}
 		
 		override protected function createGUI():void 
@@ -246,6 +253,7 @@ package
 			add(player);
 			add(enemyGroup);
 			add(weapon);
+			add(fxGroup);
 			add(bulletGroup);
 			add(BarGroup);
 			add(battleMsgGroup);

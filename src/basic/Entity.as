@@ -71,22 +71,15 @@ package basic
 			addAnimation("walk_left", [9, 10, 11, 10], 6);
 		}
 		
-		/**
-         * Update each timestep
-         */
         override public function update():void 
 		{
 			updateStatus();
             updateControls();
 			updateAnimations();	
-			updateSpells();
 			updateBattleMsg();
             super.update();
         }
          
-        /**
-         * Check keyboard/mouse controls
-         */
         protected function updateControls():void 
 		{
 			if (!alive)
@@ -210,11 +203,6 @@ package basic
 			if (timer_flash.hasExpired) {
 				battleMsg.text = "";
 			}
-		}
-		
-		protected function updateSpells():void 
-		{
-			
 		}
 		
 		public function stop():void 
