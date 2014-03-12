@@ -23,6 +23,7 @@ package
 		public var spell_1:Spell;
 		public var spell_2:Spell;
 		public var spell_3:Spell;
+		public var shadow:FXShadowTrail;
 		
 		protected var isRunning:Boolean;
 		protected var _selfSpeedFloat:Number;
@@ -92,11 +93,8 @@ package
 			addAnimation("run_right", [36, 37, 38, 37], 8);
 			addAnimation("run_down", [40, 41, 42, 41], 8);
 			addAnimation("run_left", [44, 45, 46, 45], 8);
-			// attack
-			addAnimation("attack_up", [16, 17, 18, 19, 17], 10, false);
-			addAnimation("attack_right", [30, 31, 32, 33, 34, 35], 10, false);
-			addAnimation("attack_down", [24, 25, 26, 27, 25], 10, false);
-			addAnimation("attack_left", [42, 43, 44, 45, 46, 47], 10, false);
+			
+			// attack in subclass cause we want different jobs have different attack speed
 		}
 		
 		override public function update():void 
@@ -284,7 +282,9 @@ package
 		
 		protected function updateSpells():void 
 		{
-			
+			if (spell_1 != null && spell_1.timer_lastTime != null && spell_1.timer_lastTime.hasExpired) {
+				spell_1.over();
+			}
 		}
 		
 		public function levelUp():void 

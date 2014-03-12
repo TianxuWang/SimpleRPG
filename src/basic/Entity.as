@@ -28,8 +28,8 @@ package basic
 		public var _walkSpeed:int;
 		public var _runSpeed:int;
 		public var _level:int;
-		public var _maxHealth:int;
-		public var _curHealth:int;
+		public var _maxHealth:Number;
+		public var _curHealth:Number;
 		public var _selfAttack:int;
 		public var _attack:int;
 		public var _selfDefence:int;
@@ -238,35 +238,31 @@ package basic
 		
 		public function backOff(incomingFace:uint):void 
 		{
-			switch (incomingFace) 
-			{
-				case UP:
-					velocity.y = _runSpeed * 32;
-					break;
-				case RIGHT:
-					velocity.x = -_runSpeed * 32;
-					break;
-				case DOWN:
-					velocity.y = -_runSpeed * 32;
-					break;
-				case LEFT:
-					velocity.x = _runSpeed * 32;
-					break;
-				default:
-					break;
-			}
+			//switch (incomingFace) 
+			//{
+				//case UP:
+					//velocity.y = _runSpeed * 32;
+					//break;
+				//case RIGHT:
+					//velocity.x = -_runSpeed * 32;
+					//break;
+				//case DOWN:
+					//velocity.y = -_runSpeed * 32;
+					//break;
+				//case LEFT:
+					//velocity.x = _runSpeed * 32;
+					//break;
+				//default:
+					//break;
+			//}
 		}
 		
 		public function hitByWeapon(attacker:Entity):void
 		{
 			//this.flicker(0.25);
-			//x = last.x;
-			//y = last.y;	
 			status = HURTING;
-			_curHealth -= (attacker._attack - _defence);
+			_curHealth -= attacker._attack - _defence;
 			health = _curHealth / _maxHealth * 100;
-			
-			//isBeingHit = true;
 			
 			battleMsg.text = "-" + (attacker._attack - _defence);
 			
@@ -284,8 +280,6 @@ package basic
 			status = HURTING;
 			_curHealth -= spell.damage;
 			health = _curHealth / _maxHealth * 100;
-			
-			//isBeingHit = true;
 			
 			battleMsg.text = "-" + spell.damage;
 			

@@ -11,6 +11,8 @@ package basic
 		public var holder:Entity;
 		public var attack:int;
 		
+		public var shadow:FXShadowTrail;
+		
 		public function Weapon(X:Number, Y:Number, HOLDER:Entity = null) 
 		{
 			super(X, Y);
@@ -92,9 +94,19 @@ package basic
 			else {
 				play("hidden");
 			}
+			
+			if (shadow)
+				shadow.update();
 		}
 		
-		
+		override public function draw():void 
+		{
+			if (shadow) {
+				shadow.drawToCamera(FlxG.camera);
+			}
+				
+			super.draw();
+		}
 	}
 
 }
